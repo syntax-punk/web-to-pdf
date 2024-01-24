@@ -36,7 +36,7 @@ export const gander = onRequest({
   if (tUrl && tUrl.length > 0) {
     pdf = await runPupWithUrl(tUrl);
   } else if (tContent && tContent.length > 0) {
-    pdf = await runPupWithContent(tUrl);
+    pdf = await runPupWithContent(tContent);
   } else {
     response.status(400).send("Wrong data provided");
     return;

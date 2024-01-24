@@ -5,8 +5,10 @@ import puppeteer, {Page} from "puppeteer";
 
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const extPath = path.join(__dirname, "..", "ISDCAC");
+
 const FILENAME = "document.pdf";
 const dummyUrl = "https://www.vg.no";
+const dummyContent = "<h1>OOOPS NO content provided</h1>";
 
 const exists = util.promisify(fs.exists);
 const unlink = util.promisify(fs.unlink);
@@ -55,7 +57,7 @@ export async function runPupWithUrl(websiteUrl = dummyUrl ) {
   return pdf;
 }
 
-export async function runPupWithContent(websiteUrl = dummyUrl ) {
+export async function runPupWithContent(htmlContent = dummyContent) {
   const browser = await puppeteer.launch({
     headless: "new",
     args: [
@@ -66,8 +68,9 @@ export async function runPupWithContent(websiteUrl = dummyUrl ) {
 
   const page = await browser.newPage();
 
-  await page.goto(websiteUrl, {waitUntil: "networkidle0"});
+  await page.setContent(htmlContent);
   await page.emulateMediaType("screen");
+  sleep(1000);
 
   if (await exists(FILENAME)) {
     await unlink(FILENAME);
