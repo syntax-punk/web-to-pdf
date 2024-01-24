@@ -14,30 +14,38 @@ import {runPupWithContent, runPupWithUrl} from "./main";
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
-export const helloWorld = onRequest(async (request, response) => {
-  logger.info("Hello logs!", {structuredData: true});
+export const helloWorld = onRequest({
+  cors: true,
+}, async (request, response) => {
+  logger.info("-> pdfify: ", {structuredData: true});
   if (request.method !== "POST") {
-    return response.status(405).send("Method is not allowed");
+    response.status(405).send("Method is not allowed");
+    return;
   }
 
-  if (request.body === undefined) {
-    return response.status(400).send("No data provided");
+  if (request.body === undefined || (!request.body.url && !request.body.content)) {
+    response.status(400).send("No data provided in the request");
+    return;
   }
 
   const {url, content} = request.body;
-  const trimmedUrl = url.trim();
-  const trimmedContent = content.trim();
+  const tUrl = url ? url.trim() : "";
+  const tContent = content ? content.trim() : "";
 
   let pdf: Buffer;
-  if (trimmedUrl && trimmedUrl.length > 0) {
-    pdf = await runPupWithUrl(trimmedUrl);
-  } else if (trimmedContent && trimmedContent.length > 0) {
-    pdf = await runPupWithContent(trimmedUrl);
+  if (tUrl && tUrl.length > 0) {
+    pdf = await runPupWithUrl(tUrl);
+  } else if (tContent && tContent.length > 0) {
+    pdf = await runPupWithContent(tUrl);
   } else {
-    return response.status(400).send("Wrong data provided");
+    response.status(400).send("Wrong data provided");
+    return;
   }
 
-  response.setHeader("Content-Disposition", "attachment; filename=document.pdf");
-  response.contentType("application/pdf");
-  response.send(pdf);
+  response.status(200)
+    .setHeader("Content-Disposition", "attachment; filename=document.pdf")
+    .contentType("application/pdf")
+    .send(pdf);
+
+  return;
 });

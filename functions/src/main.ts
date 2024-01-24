@@ -6,7 +6,7 @@ import puppeteer, {Page} from "puppeteer";
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const extPath = path.join(__dirname, "..", "ISDCAC");
 const FILENAME = "document.pdf";
-const dummyUrl = "https://www.finn.no/realestate/homes/ad.html?finnkode=336768262";
+const dummyUrl = "https://www.vg.no";
 
 const exists = util.promisify(fs.exists);
 const unlink = util.promisify(fs.unlink);
@@ -29,6 +29,11 @@ export async function acceptCookiesFromPopup(page: Page, popupSelector: string, 
 }
 
 export async function runPupWithUrl(websiteUrl = dummyUrl ) {
+  // Remove the PDF file if it already exists
+  if (await exists(FILENAME)) {
+    await unlink(FILENAME);
+  }
+
   const browser = await puppeteer.launch({
     headless: "new",
     args: [
@@ -41,10 +46,7 @@ export async function runPupWithUrl(websiteUrl = dummyUrl ) {
 
   await page.goto(websiteUrl, {waitUntil: "networkidle0"});
   await page.emulateMediaType("screen");
-
-  if (await exists(FILENAME)) {
-    await unlink(FILENAME);
-  }
+  sleep(1000);
 
   const pdf = await page.pdf({
     path: FILENAME,
