@@ -9,12 +9,12 @@
 
 import {onRequest} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
-import {runPupWithContent, runPupWithUrl} from "./main";
+import {cleanUp, runPupWithContent, runPupWithUrl} from "./main";
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
-export const helloWorld = onRequest({
+export const gander = onRequest({
   cors: true,
 }, async (request, response) => {
   logger.info("-> pdfify: ", {structuredData: true});
@@ -46,6 +46,8 @@ export const helloWorld = onRequest({
     .setHeader("Content-Disposition", "attachment; filename=document.pdf")
     .contentType("application/pdf")
     .send(pdf);
+
+  await cleanUp();
 
   return;
 });

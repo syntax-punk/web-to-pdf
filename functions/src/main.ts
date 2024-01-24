@@ -29,11 +29,6 @@ export async function acceptCookiesFromPopup(page: Page, popupSelector: string, 
 }
 
 export async function runPupWithUrl(websiteUrl = dummyUrl ) {
-  // Remove the PDF file if it already exists
-  if (await exists(FILENAME)) {
-    await unlink(FILENAME);
-  }
-
   const browser = await puppeteer.launch({
     headless: "new",
     args: [
@@ -90,3 +85,10 @@ export async function runPupWithContent(websiteUrl = dummyUrl ) {
   return pdf;
 }
 
+
+export async function cleanUp() {
+  // Remove the PDF file if it already exists
+  if (await exists(FILENAME)) {
+    await unlink(FILENAME);
+  }
+}
