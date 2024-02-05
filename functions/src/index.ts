@@ -15,7 +15,7 @@ import {cleanUp, runPupWithContent, runPupWithUrl} from "./main";
 // https://firebase.google.com/docs/functions/typescript
 
 export const gander = onRequest({
-  cors: ["http://localhost:1337", "https://web2pdf.syntaxpunk.com", /firebase\.com$/],
+  cors: ["http://localhost:1337", "https://web2pdf.syntaxpunk.com", "https://pdfify-fe25d.web.app"],
 }, async (request, response) => {
   logger.info("-> pdfify: ", {structuredData: true});
   if (request.method !== "POST") {
