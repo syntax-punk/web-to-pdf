@@ -1,4 +1,5 @@
 const endpoint = "https://gander-5fosbnbg3a-uc.a.run.app";
+// const endpoint = "http://127.0.0.1:5001/pdfify-fe25d/us-central1/gander";
 
 window.onload = function() {
   const button = document.querySelector('.button');

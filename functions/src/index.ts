@@ -14,10 +14,17 @@ import {cleanUp, runPupWithContent, runPupWithUrl} from "./main";
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
-export const gander = onRequest({
-  cors: ["http://localhost:1337", "https://web2pdf.syntaxpunk.com", "https://pdfify-fe25d.web.app"],
-}, async (request, response) => {
+export const gander = onRequest(async (request, response) => {
+  const shallowAllow = ["localhost:1337", "syntaxpunk.com", "pdfify-fe25d"];
+  const referrer = request.headers["referer"] || '';
+  
+  if (!shallowAllow.some((allowed) => referrer.includes(allowed))) {
+    response.status(403).send("Not allowed");
+    return;
+  }
+  
   logger.info("-> pdfify: ", {structuredData: true});
+
   if (request.method !== "POST") {
     response.status(405).send("Method is not allowed");
     return;
