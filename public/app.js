@@ -14,9 +14,7 @@ window.onload = function() {
     if (!input) {
       alert('Please enter a URL');
       return;
-    } 
-
-    console.log('-> input', input);
+    }
 
     button.classList.add('hidden');
     spinner.classList.remove('hidden');

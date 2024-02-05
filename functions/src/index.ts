@@ -16,13 +16,12 @@ import {cleanUp, runPupWithContent, runPupWithUrl} from "./main";
 
 export const gander = onRequest(async (request, response) => {
   const shallowAllow = ["localhost:1337", "syntaxpunk.com", "pdfify-fe25d"];
-  const referrer = request.headers["referer"] || '';
-  
+  const referrer = request.headers["referer"] || "";
   if (!shallowAllow.some((allowed) => referrer.includes(allowed))) {
     response.status(403).send("Not allowed");
     return;
   }
-  
+
   logger.info("-> pdfify: ", {structuredData: true});
 
   if (request.method !== "POST") {
