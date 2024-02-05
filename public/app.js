@@ -1,4 +1,4 @@
-const endpoint = "https://gander-5fosbnbg3a-uc.a.run.app";
+const endpoint = "https://gander-5fosbnbg3a-uc.a.run.app/";
 // const endpoint = "http://127.0.0.1:5001/pdfify-fe25d/us-central1/gander";
 
 window.onload = function() {
@@ -16,7 +16,7 @@ window.onload = function() {
       return;
     }
 
-    button.classList.add('hidden');
+    button.setAttribute('disabled', 'true');
     spinner.classList.remove('hidden');
 
     fetch(endpoint, {
@@ -47,7 +47,7 @@ window.onload = function() {
       }
 
       spinner.classList.add('hidden');
-      button.classList.remove('hidden');
+      button.removeAttribute('disabled');
     });
   }
 }

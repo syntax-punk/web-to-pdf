@@ -14,46 +14,41 @@ import {cleanUp, runPupWithContent, runPupWithUrl} from "./main";
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
-export const gander = onRequest({ cors: false } ,async (request, response) => {
-  const shallowAllow = ["localhost:1337", "syntaxpunk.com", "pdfify-fe25d"];
-  const referrer = request.headers["referer"] || "";
-  if (!shallowAllow.some((allowed) => referrer.includes(allowed))) {
-    response.status(403).send("Not allowed");
+export const gander = onRequest(
+  {cors: "*"}, async (request, response) => {
+    logger.info("-> pdfify: ", {structuredData: true});
+
+    if (request.method === "POST") {
+      if (request.body === undefined || (!request.body.url && !request.body.content)) {
+        response.status(400).send("No data provided in the request");
+        return;
+      }
+  
+      const {url, content} = request.body;
+      const tUrl = url ? url.trim() : "";
+      const tContent = content ? content.trim() : "";
+  
+      let pdf: Buffer;
+      if (tUrl && tUrl.length > 0) {
+        pdf = await runPupWithUrl(tUrl);
+      } else if (tContent && tContent.length > 0) {
+        pdf = await runPupWithContent(tContent);
+      } else {
+        response.status(400).send("Wrong data provided");
+        return;
+      }
+  
+      response.status(200)
+        .setHeader("Content-Disposition", "attachment; filename=document.pdf")
+        .contentType("application/pdf")
+        .send(pdf);
+  
+      await cleanUp();
+
+      return;
+    }
+
+    response.status(200).send("Hello world");
+    
     return;
-  }
-
-  logger.info("-> pdfify: ", {structuredData: true});
-
-  if (request.method !== "POST") {
-    response.status(405).send("Method is not allowed");
-    return;
-  }
-
-  if (request.body === undefined || (!request.body.url && !request.body.content)) {
-    response.status(400).send("No data provided in the request");
-    return;
-  }
-
-  const {url, content} = request.body;
-  const tUrl = url ? url.trim() : "";
-  const tContent = content ? content.trim() : "";
-
-  let pdf: Buffer;
-  if (tUrl && tUrl.length > 0) {
-    pdf = await runPupWithUrl(tUrl);
-  } else if (tContent && tContent.length > 0) {
-    pdf = await runPupWithContent(tContent);
-  } else {
-    response.status(400).send("Wrong data provided");
-    return;
-  }
-
-  response.status(200)
-    .setHeader("Content-Disposition", "attachment; filename=document.pdf")
-    .contentType("application/pdf")
-    .send(pdf);
-
-  await cleanUp();
-
-  return;
-});
+  });
