@@ -15,6 +15,7 @@ html, body {
 }
 
 main {
+  position: relative;
   display: grid;
   place-items: center;
   height: 100%;
@@ -92,6 +93,21 @@ form {
   background-color: #d3d3d3;
   border: 3px solid #a9a9a9;
   cursor: not-allowed;
+}
+
+.bypunk {
+  position: absolute;
+  top: 1.2rem;
+  font-size: 0.9rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #f1f1f1;
+  font-family: monospace;
+}
+
+.bypunk a {
+  color: #f1f1f1;
+  text-decoration: none;
 }
 
 .spinner { 
