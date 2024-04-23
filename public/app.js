@@ -8,11 +8,17 @@ window.onload = function() {
   document.theform.onsubmit = function(e) {
     e.preventDefault();
     e.stopPropagation();
-    const input = document.getElementById('url').value.trim();
+    let input = document.getElementById('url').value.trim();
     
     if (!input) {
       alert('Please enter a URL');
       return;
+    }
+
+    try {
+      input = checkUrlStructure(input);
+    } catch (error) {
+      alert("We don't support that URL. Please try another one.");
     }
 
     button.setAttribute('disabled', 'true');
@@ -48,5 +54,16 @@ window.onload = function() {
       spinner.classList.add('hidden');
       button.removeAttribute('disabled');
     });
+  }
+}
+
+function checkUrlStructure(url) {
+  const protocol = url.split('://')[0];
+
+  if (protocol.length) {
+    if (protocol !== 'http' && protocol !== 'https')
+      throw new Error('Invalid URL protocol');
+  } else {
+    return `https://${url}`;
   }
 }
